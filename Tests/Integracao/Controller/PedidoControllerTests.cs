@@ -28,7 +28,7 @@ public class PedidoControllerTest : IAsyncLifetime
     {
         _mongoContainer = new MongoDbBuilder()
             .WithImage("mongo:7.0")
-            .WithCleanUp(true)
+            .WithCleanUp(true) 
             .WithName($"mongo-pedidos-test{Guid.NewGuid()}")
             .WithPortBinding(27017, true)
             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(27017))

@@ -14,6 +14,7 @@ using Crosscutting.DTOs;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text;
 using Newtonsoft.Json;
+using DotNet.Testcontainers.Builders;
 
 namespace Tests.Integracao.Controller;
 
@@ -27,9 +28,10 @@ public class PedidoControllerTest : IAsyncLifetime
     {
         _mongoContainer = new MongoDbBuilder()
             .WithImage("mongo:7.0")
-            .WithCleanUp(true)
+            .WithCleanUp(true) 
             .WithName($"mongo-pedidos-test{Guid.NewGuid()}")
             .WithPortBinding(27017, true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(27017))
             .Build();
     }
 
@@ -46,8 +48,8 @@ public class PedidoControllerTest : IAsyncLifetime
                 {
                     var inMemorySettings = new Dictionary<string, string>
                     {
-                        ["MongoSettings:ConnectionString"] = connectionString,
-                        ["MongoSettings:Database"] = "TestDb"
+                        ["MongoDB:ConnectionString"] = connectionString,
+                        ["MongoDB:DatabaseName"] = "TestDb"
                     };
 
                     configBuilder.AddInMemoryCollection(inMemorySettings);
@@ -90,7 +92,13 @@ public class PedidoControllerTest : IAsyncLifetime
         // Act
         var response = await _client.PostAsJsonAsync("/api/pedidos", gerarPedidoDto);
 
-        return await response.Content.ReadFromJsonAsync<PedidoGeradoDTO>();
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Response status: {response.StatusCode}");
+        Console.WriteLine($"Response content: {content}");
+
+        response.EnsureSuccessStatusCode(); // lança se não for 2xx
+
+        return JsonConvert.DeserializeObject<PedidoGeradoDTO>(content);
     }
 
     [Fact]

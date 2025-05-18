@@ -90,7 +90,13 @@ public class PedidoControllerTest : IAsyncLifetime
         // Act
         var response = await _client.PostAsJsonAsync("/api/pedidos", gerarPedidoDto);
 
-        return await response.Content.ReadFromJsonAsync<PedidoGeradoDTO>();
+        var content = await response.Content.ReadAsStringAsync();
+        Console.WriteLine($"Response status: {response.StatusCode}");
+        Console.WriteLine($"Response content: {content}");
+
+        response.EnsureSuccessStatusCode(); // lança se não for 2xx
+
+        return JsonConvert.DeserializeObject<PedidoGeradoDTO>(content);
     }
 
     [Fact]

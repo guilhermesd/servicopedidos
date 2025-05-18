@@ -18,6 +18,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Install xmllint (libxml2-utils)
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+
       - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
@@ -59,7 +62,7 @@ jobs:
             echo "✅ Cobertura de código ${coveragePercentagePerc}% está acima de ${minCoverage}%"
           fi
 
-      - name: Upload coverage report as artifact (opcional)
+      - name: Upload coverage report as artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report

@@ -153,7 +153,7 @@ public class PedidoControllerTest : IAsyncLifetime
         var retorno = await GerarPedido();
         var filtro = new ObterPedidosDTO
         {
-            StatusPedidoDTO = StatusPedidoDTO.Recebido,
+            StatusPedidoDTO = StatusPedidoDTO.Recebido, 
             SomentePedidosEmProducao = true
         };
 

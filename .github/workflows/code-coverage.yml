@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  test-and-validate:
-    runs-on: ubuntu-latest
+  validador-cobertura-testes-70:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -18,14 +18,8 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install xmllint (libxml2-utils)
-        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
-
       - name: Install ReportGenerator tool
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-      - name: Add .NET tools to PATH
-        run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Restore dependencies
         run: dotnet restore
@@ -35,35 +29,29 @@ jobs:
 
       - name: Convert to Cobertura format
         run: |
-          reportgenerator \
-            -reports:"**/coverage.cobertura.xml" \
-            -targetdir:"coverlet/reports" \
+          reportgenerator `
+            -reports:"**/coverage.cobertura.xml" `
+            -targetdir:"coverlet/reports" `
             -reporttypes:Cobertura
 
       - name: Validate code coverage
+        shell: pwsh
         run: |
-          minCoverage=70
-          coverageReportPath="coverlet/reports/Cobertura.xml"
+          $minCoverage = 70
+          $coverageReportPath = "coverlet/reports/Cobertura.xml"
 
-          if [ ! -f "$coverageReportPath" ]; then
-            echo "❌ Arquivo de cobertura não encontrado em $coverageReportPath"
+          if (-Not (Test-Path $coverageReportPath)) {
+            Write-Error "Arquivo de cobertura não encontrado em $coverageReportPath"
             exit 1
-          fi
+          }
 
-          coveragePercentage=$(xmllint --xpath "string(//coverage/@line-rate)" "$coverageReportPath")
-          coveragePercentagePerc=$(echo "$coveragePercentage * 100" | bc)
+          [xml]$coverageReport = Get-Content $coverageReportPath
+          $coveragePercentage = $coverageReport.SelectSingleNode("//coverage").GetAttribute("line-rate")
+          $coveragePercentagePerc = ([decimal]$coveragePercentage * 100)
 
-          coverageInt=$(printf "%.0f" "$coveragePercentagePerc")
-
-          if [ "$coverageInt" -lt "$minCoverage" ]; then
-            echo "❌ Cobertura de código ${coveragePercentagePerc}% está abaixo de ${minCoverage}%"
-            exit 1
-          else
-            echo "✅ Cobertura de código ${coveragePercentagePerc}% está acima de ${minCoverage}%"
-          fi
-
-      - name: Upload coverage report as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverlet/reports
+          if ($coveragePercentagePerc -lt $minCoverage) {
+              Write-Host "❌ Cobertura de código $coveragePercentagePerc% está abaixo de $minCoverage%"
+              exit 1
+          } else {
+              Write-Host "✅ Cobertura de código $coveragePercentagePerc% está acima de $minCoverage%"
+          }

@@ -1,0 +1,57 @@
+name: Code Coverage
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-and-validate:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install ReportGenerator tool
+        run: dotnet tool install -g dotnet-reportgenerator-globaltool
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests with coverage
+        run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+      - name: Convert to Cobertura format
+        run: |
+          reportgenerator `
+            -reports:"**/coverage.cobertura.xml" `
+            -targetdir:"coverlet/reports" `
+            -reporttypes:Cobertura
+
+      - name: Validate code coverage
+        shell: pwsh
+        run: |
+          $minCoverage = 70
+          $coverageReportPath = "coverlet/reports/Cobertura.xml"
+
+          if (-Not (Test-Path $coverageReportPath)) {
+            Write-Error "Arquivo de cobertura não encontrado em $coverageReportPath"
+            exit 1
+          }
+
+          [xml]$coverageReport = Get-Content $coverageReportPath
+          $coveragePercentage = $coverageReport.SelectSingleNode("//coverage").GetAttribute("line-rate")
+          $coveragePercentagePerc = ([decimal]$coveragePercentage * 100)
+
+          if ($coveragePercentagePerc -lt $minCoverage) {
+              Write-Host "❌ Cobertura de código $coveragePercentagePerc% está abaixo de $minCoverage%"
+              exit 1
+          } else {
+              Write-Host "✅ Cobertura de código $coveragePercentagePerc% está acima de $minCoverage%"
+          }

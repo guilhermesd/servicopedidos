@@ -48,8 +48,8 @@ public class PedidoControllerTest : IAsyncLifetime
                 {
                     var inMemorySettings = new Dictionary<string, string>
                     {
-                        ["MongoSettings:ConnectionString"] = connectionString,
-                        ["MongoSettings:Database"] = "TestDb"
+                        ["MongoDB:ConnectionString"] = connectionString,
+                        ["MongoDB:DatabaseName"] = "TestDb"
                     };
 
                     configBuilder.AddInMemoryCollection(inMemorySettings);
@@ -108,67 +108,67 @@ public class PedidoControllerTest : IAsyncLifetime
         retorno.Should().NotBeNull();
     }
 
-    //[Fact]
-    //public async Task Deve_Atualizar_Status_Pedido()
-    //{
-    //    // Arrange
-    //    var gerado = await GerarPedido();
-    //    var pedidoId = gerado?.IdPedido; // Idealmente você insere um pedido real no Mongo antes.
-    //    var dto = new AlterarStatusPedidoDTO
-    //    {
-    //        Status = StatusPedidoDTO.EmPreparacao
-    //    };
+    [Fact]
+    public async Task Deve_Atualizar_Status_Pedido()
+    {
+        // Arrange
+        var gerado = await GerarPedido();
+        var pedidoId = gerado?.IdPedido; // Idealmente você insere um pedido real no Mongo antes.
+        var dto = new AlterarStatusPedidoDTO
+        {
+            Status = StatusPedidoDTO.EmPreparacao
+        };
 
-    //    var json = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+        var json = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
 
-    //    // Act
-    //    var response = await _client.PutAsync($"/api/pedidos/{pedidoId}/alterar/status-pedido", json);
+        // Act
+        var response = await _client.PutAsync($"/api/pedidos/{pedidoId}/alterar/status-pedido", json);
 
-    //    // Assert
-    //    response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-    //}
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
 
-    //[Fact]
-    //public async Task Deve_Atualizar_Status_Pagamento()
-    //{
-    //    // Arrange
-    //    var gerado = await GerarPedido();
-    //    var pedidoId = gerado?.IdPedido; // Idealmente você insere um pedido real no Mongo antes.
-    //    var dto = new AlterarStatusPagamentoDTO
-    //    {
-    //        Status = "PAGO"
-    //    };
+    [Fact]
+    public async Task Deve_Atualizar_Status_Pagamento()
+    {
+        // Arrange
+        var gerado = await GerarPedido();
+        var pedidoId = gerado?.IdPedido; // Idealmente você insere um pedido real no Mongo antes.
+        var dto = new AlterarStatusPagamentoDTO
+        {
+            Status = "PAGO"
+        };
 
-    //    var json = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
+        var json = new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json");
 
-    //    // Act
-    //    var response = await _client.PutAsync($"/api/pedidos/{pedidoId}/alterar/status-pagamento", json);
+        // Act
+        var response = await _client.PutAsync($"/api/pedidos/{pedidoId}/alterar/status-pagamento", json);
 
-    //    // Assert
-    //    response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-    //}
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
 
-    //[Fact]
-    //public async Task Deve_Obter_Pedidos_Com_Filtro()
-    //{
-    //    // Arrange
-    //    var retorno = await GerarPedido();
-    //    var filtro = new ObterPedidosDTO
-    //    {
-    //        StatusPedidoDTO = StatusPedidoDTO.Recebido,
-    //        SomentePedidosEmProducao = true
-    //    };
+    [Fact]
+    public async Task Deve_Obter_Pedidos_Com_Filtro()
+    {
+        // Arrange
+        var retorno = await GerarPedido();
+        var filtro = new ObterPedidosDTO
+        {
+            StatusPedidoDTO = StatusPedidoDTO.Recebido,
+            SomentePedidosEmProducao = true
+        };
 
-    //    var query = $"?StatusPedidoDTO={filtro.StatusPedidoDTO}&SomentePedidosEmProducao={filtro.SomentePedidosEmProducao}";
+        var query = $"?StatusPedidoDTO={filtro.StatusPedidoDTO}&SomentePedidosEmProducao={filtro.SomentePedidosEmProducao}";
 
-    //    // Act
-    //    var response = await _client.GetAsync($"/api/pedidos{query}");
+        // Act
+        var response = await _client.GetAsync($"/api/pedidos{query}");
 
-    //    // Assert
-    //    response.StatusCode.Should().Be(HttpStatusCode.OK);
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-    //    var body = await response.Content.ReadAsStringAsync();
-    //    var pedidos = JsonConvert.DeserializeObject<List<PedidoDTO>>(body);
-    //    pedidos.Should().NotBeNull();
-    //}
+        var body = await response.Content.ReadAsStringAsync();
+        var pedidos = JsonConvert.DeserializeObject<List<PedidoDTO>>(body);
+        pedidos.Should().NotBeNull();
+    }
 }

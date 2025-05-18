@@ -14,6 +14,7 @@ using Crosscutting.DTOs;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text;
 using Newtonsoft.Json;
+using DotNet.Testcontainers.Builders;
 
 namespace Tests.Integracao.Controller;
 
@@ -30,6 +31,7 @@ public class PedidoControllerTest : IAsyncLifetime
             .WithCleanUp(true)
             .WithName($"mongo-pedidos-test{Guid.NewGuid()}")
             .WithPortBinding(27017, true)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(27017))
             .Build();
     }
 

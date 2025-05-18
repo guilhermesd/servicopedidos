@@ -39,7 +39,7 @@ namespace Domain.Entities
         public Pedido(string? cpfCliente)
         {
             IdPedido = Guid.NewGuid();
-            Data = DateTime.UtcNow;
+            Data = DateTime.UtcNow; 
             CpfCliente = cpfCliente;
             DataStatusPedido = DateTime.UtcNow;
             Status = StatusPedido.Recebido;

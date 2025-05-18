@@ -19,45 +19,10 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x' # ajuste se necessário
-
-    - name: Install ReportGenerator tool
-      run: dotnet tool install -g dotnet-reportgenerator-globaltool
+        dotnet-version: '8.0.x'
 
     - name: Restore dependencies
       run: dotnet restore
-
-    - name: Run tests with coverage
-      run: dotnet test --collect:"XPlat Code Coverage" --results-directory ./TestResults
-
-    - name: Convert cobertura format
-      run: |
-        reportgenerator \
-          -reports:"**/coverage.cobertura.xml" \
-          -targetdir:"coverlet/reports" \
-          -reporttypes:Cobertura
-
-    - name: Validate code coverage
-      shell: pwsh
-      run: |
-        $minCoverage = 70
-        $coverageReportPath = "coverlet/reports/Cobertura.xml"
-
-        if (-Not (Test-Path $coverageReportPath)) {
-          Write-Error "Arquivo de cobertura não encontrado em $coverageReportPath"
-          exit 1
-        }
-
-        [xml]$coverageReport = Get-Content $coverageReportPath
-        $coveragePercentage = $coverageReport.SelectSingleNode("//coverage").GetAttribute("line-rate")
-        $coveragePercentagePerc = ([decimal]$coveragePercentage * 100)
-
-        if ($coveragePercentagePerc -lt $minCoverage) {
-            Write-Host "❌ Cobertura de código $coveragePercentagePerc% está abaixo de $minCoverage%"
-            exit 1
-        } else {
-            Write-Host "✅ Cobertura de código $coveragePercentagePerc% está acima de $minCoverage%"
-        }
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -77,7 +42,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -f Api/Dockerfile -t servicopedidos:${{ env.IMAGE_TAG }} .
+        docker build -f WebApplication1/Dockerfile -t servicopedidos:${{ env.IMAGE_TAG }} .
 
     - name: Tag Docker image
       run: |

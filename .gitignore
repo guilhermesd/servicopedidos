@@ -1,0 +1,58 @@
+# .NET
+bin/
+obj/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# ASP.NET Core Secrets
+**/appsettings.*.json
+!**/appsettings.Development.json
+secrets.json
+
+# Logs
+*.log
+
+# Publish artifacts
+**/publish/
+**/wwwroot/
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+.history/
+
+# Visual Studio
+.vs/
+
+# Docker
+**/Dockerfile.*
+!**/Dockerfile.migrations
+**/docker-compose*
+docker-compose.override.yml
+*.tar
+*.img
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+terraform.tfvars
+terraform.tfvars.json
+crash.log
+
+# Ignore environment variables or overrides
+.env
+*.env
+
+# Node (caso tenha front-end junto)
+node_modules/
+dist/
+
+# OS junk
+Thumbs.db
+.DS_Store

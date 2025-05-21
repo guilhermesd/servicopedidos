@@ -1,4 +1,5 @@
-﻿using Application.UseCases;
+﻿using Application.Middleares;
+using Application.UseCases;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.ServicosExternos;
 using Infrastructure.Repositories;
@@ -6,9 +7,6 @@ using Infrastructure.ServicosExternos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,6 +72,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionsMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

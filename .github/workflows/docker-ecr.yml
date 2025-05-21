@@ -46,8 +46,8 @@ jobs:
 
     - name: Tag Docker image
       run: |
-        docker tag servicopedidos:${{ env.IMAGE_TAG }} 439667737553.dkr.ecr.us-east-1.amazonaws.com/servicopedidos-repo:${{ env.IMAGE_TAG }}
+        docker tag servicopedidos:${{ env.IMAGE_TAG }} 100527548163.dkr.ecr.us-east-1.amazonaws.com/servicopedidos-repo:${{ env.IMAGE_TAG }}
 
     - name: Push to Amazon ECR
       run: |
-        docker push 439667737553.dkr.ecr.us-east-1.amazonaws.com/servicopedidos-repo:${{ env.IMAGE_TAG }}
+        docker push 100527548163.dkr.ecr.us-east-1.amazonaws.com/servicopedidos-repo:${{ env.IMAGE_TAG }}

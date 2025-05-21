@@ -1,20 +1,18 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
-using Testcontainers.MongoDb;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Domain.Interfaces.ServicosExternos;
-using Infrastructure.ServicosExternos;
-using Application.UseCases;
+﻿using Application.UseCases;
 using Crosscutting.DTOs;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Text;
-using Newtonsoft.Json;
+using Domain.Interfaces.ServicosExternos;
 using DotNet.Testcontainers.Builders;
+using FluentAssertions;
+using Infrastructure.ServicosExternos;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http.Json;
+using System.Text;
+using Testcontainers.MongoDb;
 
 namespace Tests.Integracao.Controller;
 
@@ -155,7 +153,7 @@ public class PedidoControllerTest : IAsyncLifetime
         var retorno = await GerarPedido();
         var filtro = new ObterPedidosDTO
         {
-            StatusPedidoDTO = StatusPedidoDTO.Recebido,
+            StatusPedidoDTO = StatusPedidoDTO.Recebido, 
             SomentePedidosEmProducao = true
         };
 

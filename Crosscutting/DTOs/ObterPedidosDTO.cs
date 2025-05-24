@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Crosscutting.DTOs
+﻿namespace Crosscutting.DTOs
 {
     public class ObterPedidosDTO
     {
@@ -17,6 +11,7 @@ namespace Crosscutting.DTOs
         /// Retorna por um status específico
         /// </summary>
         public StatusPedidoDTO? StatusPedidoDTO { get; set; }
-
+        public int Pagina { get; set; } = 0;
+        public int TamanhoPagina { get; set; } = 10;
     }
 }

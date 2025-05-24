@@ -168,5 +168,26 @@ public class PedidoControllerTest : IAsyncLifetime
         var body = await response.Content.ReadAsStringAsync();
         var pedidos = JsonConvert.DeserializeObject<List<PedidoDTO>>(body);
         pedidos.Should().NotBeNull();
+        pedidos.Should().NotBeEmpty();
+
+        foreach (var pedido in pedidos)
+        {
+            pedido.IdPedido.Should().NotBeEmpty();
+            pedido.Data.Should().BeAfter(DateTime.MinValue); // ou qualquer critério que você use
+            pedido.CpfCliente.Should().NotBeNullOrEmpty();   // ou .BeNull() se opcional
+            pedido.DataStatusPedido.Should().BeAfter(DateTime.MinValue);
+
+            // StatusPagamento pode ser nulo
+            if (pedido.StatusPagamento != null)
+                pedido.StatusPagamento.Should().NotBeNullOrWhiteSpace();
+
+            // DataStatusPagamento pode ser nula
+            if (pedido.DataStatusPagamento.HasValue)
+                pedido.DataStatusPagamento.Value.Should().BeAfter(DateTime.MinValue);
+
+            pedido.ValorPedido.Should().BeGreaterThanOrEqualTo(0);
+
+            pedido.Itens.Should().NotBeNull(); // pode ser vazio, mas não nulo
+        }
     }
 }

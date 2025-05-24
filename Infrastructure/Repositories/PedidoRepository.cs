@@ -47,19 +47,14 @@ namespace Infrastructure.Repositories
 
             if (dto.SomentePedidosEmProducao)
             {
-                pedidoQuery.Where(c => c.Status != StatusPedido.Finalizado);
+                pedidoQuery = pedidoQuery.Where(c => c.Status != StatusPedido.Finalizado);
             }
 
-            // Filtrar por status específico (opcional)
             if (dto.StatusPedidoDTO.HasValue)
             {
-                pedidoQuery.Where(c => c.Status == (StatusPedido) dto.StatusPedidoDTO);
+                pedidoQuery = pedidoQuery.Where(c => c.Status == (StatusPedido)dto.StatusPedidoDTO);
             }
 
-            // Obtem os pedidos filtrados
-            var pedidos = await pedidoQuery.ToListAsync();
-
-            // Ordenação por prioridade de status e data
             var statusOrdem = new Dictionary<StatusPedido, int>
     {
         { StatusPedido.Pronto, 0 },
@@ -68,14 +63,21 @@ namespace Infrastructure.Repositories
         { StatusPedido.Finalizado, 3 },
     };
 
-            var pedidosOrdenados = pedidos
-                .Where(p => statusOrdem.ContainsKey(p.Status)) // Remove "Finalizado" da ordenação, se aparecer
+            pedidoQuery = pedidoQuery
+                .Where(p => statusOrdem.ContainsKey(p.Status))
                 .OrderBy(p => statusOrdem[p.Status])
-                .ThenBy(p => p.Data)
-                .ToList();
+                .ThenBy(p => p.Data);
 
-            return pedidosOrdenados;
+            // Aplicar paginação (skip/take)
+            int skip = (dto.Pagina - 1) * dto.TamanhoPagina;
+            var pedidosPaginados = await pedidoQuery
+                .Skip(skip)
+                .Take(dto.TamanhoPagina)
+                .ToListAsync();
+
+            return pedidosPaginados;
         }
+
 
     }
 }
